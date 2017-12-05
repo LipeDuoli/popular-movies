@@ -31,33 +31,10 @@ public class MovieDbApiFactory {
     private static String LANGUAGE_PARAM = "language";
 
     public static MovieDbService getMovieDbService(final Context context) {
-        //create an client to add api key and language on every request
-        OkHttpClient clientInterceptor = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request originalRequest = chain.request();
-                HttpUrl originalUrl = originalRequest.url();
-
-                String apiKey = context.getString(R.string.moviedb_api_key);
-                String systemLocale = getSystemLocale();
-
-                HttpUrl newUrl = originalUrl.newBuilder()
-                        .addQueryParameter(API_KEY_PARAM, apiKey)
-                        .addQueryParameter(LANGUAGE_PARAM, systemLocale)
-                        .build();
-
-                Log.d(TAG, newUrl.toString());
-
-                Request newRequest = originalRequest.newBuilder().url(newUrl).build();
-
-                return chain.proceed(newRequest);
-            }
-        }).build();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MOVIEDB_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(clientInterceptor)
+                .client(createClienteWithApiKey(context))
                 .build();
 
         return retrofit.create(MovieDbService.class);
@@ -78,5 +55,35 @@ public class MovieDbApiFactory {
             locale = Resources.getSystem().getConfiguration().locale;
         }
         return locale.toString().replace("_", "-");
+    }
+
+    /**
+     * This method return an Cliente with fixed API Key and language on each request
+     *
+     * Get this code from
+     * @link https://futurestud.io/tutorials/retrofit-2-how-to-add-query-parameters-to-every-request
+     */
+    private static OkHttpClient createClienteWithApiKey(final Context context){
+        return new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request originalRequest = chain.request();
+                HttpUrl originalUrl = originalRequest.url();
+
+                String apiKey = context.getString(R.string.moviedb_api_key);
+                String systemLocale = getSystemLocale();
+
+                HttpUrl newUrl = originalUrl.newBuilder()
+                        .addQueryParameter(API_KEY_PARAM, apiKey)
+                        .addQueryParameter(LANGUAGE_PARAM, systemLocale)
+                        .build();
+
+                Log.d(TAG, newUrl.toString());
+
+                Request newRequest = originalRequest.newBuilder().url(newUrl).build();
+
+                return chain.proceed(newRequest);
+            }
+        }).build();
     }
 }
