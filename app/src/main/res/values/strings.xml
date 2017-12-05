@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Filmes Populares</string>
+
+    <!--main activity-->
+    <string name="load_movie_erro_text">Erro ao carregar os filmes</string>
+    <string name="load_movie_erro_button">Recarregar</string>
+    <string name="show_popular_movies">Filtrar por Filmes Populares</string>
+    <string name="show_top_rated">Filtrar por Melhores Classificados</string>
+    <string name="detail_activity_title">Detalhes do Filme</string>
+
+    <!--detail activity-->
+    <string name="movie_vote_format">%1$.1f/10</string>
+
+    <!--uncomment the line below and insert you API KEY-->
+    <!--<string name="moviedb_api_key" translatable="false">API_KEY</string>-->
+
+</resources>
