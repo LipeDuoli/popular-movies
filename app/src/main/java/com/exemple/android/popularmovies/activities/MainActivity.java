@@ -17,9 +17,9 @@ import com.exemple.android.popularmovies.R;
 import com.exemple.android.popularmovies.adapter.MovieAdapter;
 import com.exemple.android.popularmovies.model.Movie;
 import com.exemple.android.popularmovies.model.PageableMovieList;
-import com.exemple.android.popularmovies.service.FilterMovieType;
 import com.exemple.android.popularmovies.service.MovieDbApiFactory;
 import com.exemple.android.popularmovies.service.MovieDbService;
+import com.exemple.android.popularmovies.service.FilterMovieType;
 import com.exemple.android.popularmovies.utils.EndlessRecyclerViewScrollListener;
 
 import butterknife.BindView;
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
 
     private MovieAdapter mMovieAdapter;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
+    private @FilterMovieType.MovieType int mloadedMovieType;
     private Callback<PageableMovieList> retrofitCallback = new Callback<PageableMovieList>() {
         @Override
         public void onResponse(Call<PageableMovieList> call, Response<PageableMovieList> response) {
@@ -68,7 +69,6 @@ public class MainActivity extends AppCompatActivity
             displayErrorFrame(true);
         }
     };
-    private FilterMovieType mloadedMovieType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         loadMovieData(mloadedMovieType, FIRST_PAGE);
     }
 
-    private void loadMovieData(FilterMovieType movieType, int pageNumber) {
+    private void loadMovieData(@FilterMovieType.MovieType int movieType, int pageNumber) {
         //only show loading progress bar on first load
         if (pageNumber == FIRST_PAGE) {
             mMovieRecyclerView.setVisibility(View.GONE);
@@ -95,10 +95,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         switch (movieType) {
-            case POPULAR:
+            case FilterMovieType.POPULAR:
                 loadPopularMovieData(pageNumber);
                 break;
-            case TOP_RATED:
+            case FilterMovieType.TOP_RATED:
                 loadTopRatedMovieData(pageNumber);
                 break;
         }

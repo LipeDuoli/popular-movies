@@ -40,7 +40,7 @@ public class MovieDbApiFactory {
         return retrofit.create(MovieDbService.class);
     }
 
-    public static String getPosterUrl(String posterPath, PosterSize posterSize) {
+    public static String getPosterUrl(String posterPath, @PosterSize.Size String posterSize) {
         String buildPosterUrl = MOVIEDB_POSTER_BASE_URL + posterSize + posterPath;
 //        Log.d(TAG, "IMG url: " + buildPosterUrl);
 

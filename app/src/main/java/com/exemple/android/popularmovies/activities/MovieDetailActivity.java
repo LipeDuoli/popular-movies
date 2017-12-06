@@ -46,7 +46,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     @SuppressLint("StringFormatInvalid")
     private void displayMovieDetails() {
-        String moviePosterPath = MovieDbApiFactory.getPosterUrl(mMovie.getPosterPath(), PosterSize.w185);
+        String moviePosterPath = MovieDbApiFactory.getPosterUrl(mMovie.getPosterPath(), PosterSize.W185);
         Picasso.with(this).load(moviePosterPath).into(mMoviePoster);
         mMovieTitle.setText(mMovie.getTitle());
         mMovieReleadeDate.setText(DateUtils.formatDate(mMovie.getReleaseDate()));
