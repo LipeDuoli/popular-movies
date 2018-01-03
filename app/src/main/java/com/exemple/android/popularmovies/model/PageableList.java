@@ -4,13 +4,22 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class PageableMovieList {
+public class PageableList<T> {
 
+    private int id;
     private int page;
     private int totalResults;
     private int totalPages;
     @SerializedName("results")
-    private List<Movie> movies;
+    private List<T> list;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getPage() {
         return page;
@@ -36,11 +45,11 @@ public class PageableMovieList {
         this.totalPages = totalPages;
     }
 
-    public List<Movie> getMovies() {
-        return movies;
+    public List<T> getList() {
+        return list;
     }
 
-    public void setMovies(List<Movie> movies) {
-        this.movies = movies;
+    public void setList(List<T> list) {
+        this.list = list;
     }
 }

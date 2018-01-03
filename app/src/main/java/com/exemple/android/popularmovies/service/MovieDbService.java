@@ -1,6 +1,7 @@
 package com.exemple.android.popularmovies.service;
 
-import com.exemple.android.popularmovies.model.PageableMovieList;
+import com.exemple.android.popularmovies.model.Movie;
+import com.exemple.android.popularmovies.model.PageableList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -13,8 +14,8 @@ public interface MovieDbService {
     String PAGE_NUMBER_PARAM = "page";
 
     @GET(POPULAR_MOVIE_PATH)
-    Call<PageableMovieList> getPopularMovies(@Query(PAGE_NUMBER_PARAM) int pageNumber);
+    Call<PageableList<Movie>> getPopularMovies(@Query(PAGE_NUMBER_PARAM) int pageNumber);
 
     @GET(TOP_RATED_MOVIE_PATH)
-    Call<PageableMovieList> getTopRatedMovies(@Query(PAGE_NUMBER_PARAM) int pageNumber);
+    Call<PageableList<Movie>> getTopRatedMovies(@Query(PAGE_NUMBER_PARAM) int pageNumber);
 }

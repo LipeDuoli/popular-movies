@@ -16,7 +16,7 @@ import android.widget.ProgressBar;
 import com.exemple.android.popularmovies.R;
 import com.exemple.android.popularmovies.adapter.MovieAdapter;
 import com.exemple.android.popularmovies.model.Movie;
-import com.exemple.android.popularmovies.model.PageableMovieList;
+import com.exemple.android.popularmovies.model.PageableList;
 import com.exemple.android.popularmovies.service.MovieDbApiFactory;
 import com.exemple.android.popularmovies.service.MovieDbService;
 import com.exemple.android.popularmovies.service.FilterMovieType;
@@ -47,23 +47,22 @@ public class MainActivity extends AppCompatActivity
     private MovieAdapter mMovieAdapter;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
     private @FilterMovieType.MovieType int mloadedMovieType;
-    private Callback<PageableMovieList> retrofitCallback = new Callback<PageableMovieList>() {
+    private Callback<PageableList<Movie>> retrofitMovieCallback = new Callback<PageableList<Movie>>() {
         @Override
-        public void onResponse(Call<PageableMovieList> call, Response<PageableMovieList> response) {
+        public void onResponse(Call<PageableList<Movie>> call, Response<PageableList<Movie>> response) {
             mProgressBarLoadingMovies.setVisibility(View.GONE);
             if (response.isSuccessful()) {
                 displayErrorFrame(false);
                 if (response.body().getPage() == FIRST_PAGE) {
-                    mMovieAdapter.setMovieList(response.body().getMovies());
+                    mMovieAdapter.setMovieList(response.body().getList());
                     mEndlessScrollListener.resetState();
                 } else {
-                    mMovieAdapter.addMovies(response.body().getMovies());
+                    mMovieAdapter.addMovies(response.body().getList());
                 }
             }
         }
-
         @Override
-        public void onFailure(Call<PageableMovieList> call, Throwable t) {
+        public void onFailure(Call<PageableList<Movie>> call, Throwable t) {
             Log.e(TAG, t.getMessage());
             mProgressBarLoadingMovies.setVisibility(View.GONE);
             displayErrorFrame(true);
@@ -106,12 +105,12 @@ public class MainActivity extends AppCompatActivity
 
     private void loadPopularMovieData(int pageNumber) {
         MovieDbService movieDbService = MovieDbApiFactory.getMovieDbService(this);
-        movieDbService.getPopularMovies(pageNumber).enqueue(retrofitCallback);
+        movieDbService.getPopularMovies(pageNumber).enqueue(retrofitMovieCallback);
     }
 
     private void loadTopRatedMovieData(int pageNumber) {
         MovieDbService movieDbService = MovieDbApiFactory.getMovieDbService(this);
-        movieDbService.getTopRatedMovies(pageNumber).enqueue(retrofitCallback);
+        movieDbService.getTopRatedMovies(pageNumber).enqueue(retrofitMovieCallback);
     }
 
     private void configureRecyclerView() {
