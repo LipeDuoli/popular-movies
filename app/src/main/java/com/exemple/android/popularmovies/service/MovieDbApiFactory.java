@@ -2,6 +2,7 @@ package com.exemple.android.popularmovies.service;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
@@ -27,6 +28,8 @@ public class MovieDbApiFactory {
 
     private static String MOVIEDB_POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
 
+    private static String VIDEO_BASE_URL = "https://www.youtube.com/watch?v=";
+
     private static String API_KEY_PARAM = "api_key";
     private static String LANGUAGE_PARAM = "language";
 
@@ -45,6 +48,11 @@ public class MovieDbApiFactory {
 //        Log.d(TAG, "IMG url: " + buildPosterUrl);
 
         return buildPosterUrl;
+    }
+
+    public static Uri buildVideoUri(String movieKey){
+        String fullUrl = VIDEO_BASE_URL + movieKey;
+        return Uri.parse(fullUrl);
     }
 
     private static String getSystemLocale() {
