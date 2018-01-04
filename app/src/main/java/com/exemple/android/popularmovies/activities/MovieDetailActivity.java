@@ -2,6 +2,7 @@ package com.exemple.android.popularmovies.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,10 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.exemple.android.popularmovies.R;
+import com.exemple.android.popularmovies.adapter.ReviewAdapter;
 import com.exemple.android.popularmovies.adapter.VideoAdapter;
 import com.exemple.android.popularmovies.model.Movie;
 import com.exemple.android.popularmovies.model.PageableList;
 import com.exemple.android.popularmovies.model.PosterSize;
+import com.exemple.android.popularmovies.model.Review;
 import com.exemple.android.popularmovies.model.Video;
 import com.exemple.android.popularmovies.service.MovieDbApiFactory;
 import com.exemple.android.popularmovies.service.MovieDbService;
@@ -30,7 +33,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MovieDetailActivity extends AppCompatActivity implements VideoAdapter.VideoAdapterOnClickHandler {
+public class MovieDetailActivity extends AppCompatActivity implements
+        VideoAdapter.VideoAdapterOnClickHandler, ReviewAdapter.ReviewAdapterOnClickHandler {
 
     private static String TAG = MovieDetailActivity.class.getSimpleName();
     public static final String EXTRA_MOVIE = "extraMovie";
@@ -49,15 +53,22 @@ public class MovieDetailActivity extends AppCompatActivity implements VideoAdapt
     RecyclerView mMovieTrailersRecylerView;
     @BindView(R.id.tv_video_title)
     TextView mVideoTitle;
+    @BindView(R.id.tv_review_title)
+    TextView mReviewTitle;
+    @BindView(R.id.rv_movie_reviews)
+    RecyclerView mMovieReviewsRecyclerView;
 
+    private MovieDbService movieDbService;
     private Movie mMovie;
     private VideoAdapter mVideoAdapter;
+    private ReviewAdapter mReviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
+        movieDbService = MovieDbApiFactory.getMovieDbService(this);
 
         if (getIntent().hasExtra(EXTRA_MOVIE)) {
             mMovie = getIntent().getParcelableExtra(EXTRA_MOVIE);
@@ -65,8 +76,11 @@ public class MovieDetailActivity extends AppCompatActivity implements VideoAdapt
 
         displayMovieDetails();
 
-        configureRecylerView();
+        configureTrailersRecylerView();
         loadMovieTrailers();
+
+        configureReviewsRecyclerView();
+        loadMovieReviews();
     }
 
     @SuppressLint("StringFormatInvalid")
@@ -79,7 +93,7 @@ public class MovieDetailActivity extends AppCompatActivity implements VideoAdapt
         mMovieOverview.setText(mMovie.getOverview());
     }
 
-    private void configureRecylerView() {
+    private void configureTrailersRecylerView() {
         mVideoAdapter = new VideoAdapter(this);
 
         mMovieTrailersRecylerView.setAdapter(mVideoAdapter);
@@ -88,7 +102,6 @@ public class MovieDetailActivity extends AppCompatActivity implements VideoAdapt
     }
 
     private void loadMovieTrailers() {
-        MovieDbService movieDbService = MovieDbApiFactory.getMovieDbService(this);
         movieDbService.getMovieTrailers(mMovie.getId()).enqueue(new Callback<PageableList<Video>>() {
             @Override
             public void onResponse(Call<PageableList<Video>> call, Response<PageableList<Video>> response) {
@@ -109,12 +122,50 @@ public class MovieDetailActivity extends AppCompatActivity implements VideoAdapt
         });
     }
 
+    private void configureReviewsRecyclerView() {
+        mReviewAdapter = new ReviewAdapter(this);
+
+        mMovieReviewsRecyclerView.setAdapter(mReviewAdapter);
+        mMovieReviewsRecyclerView.setHasFixedSize(true);
+        mMovieReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void loadMovieReviews() {
+        movieDbService.getMovieReviews(mMovie.getId()).enqueue(new Callback<PageableList<Review>>() {
+            @Override
+            public void onResponse(Call<PageableList<Review>> call, Response<PageableList<Review>> response) {
+                List<Review> reviews = response.body().getList();
+                if (reviews.isEmpty()) {
+                    hideReviews();
+                } else {
+                    mReviewAdapter.setReviewList(reviews);
+                    showReviews();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PageableList<Review>> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+                hideReviews();
+            }
+        });
+
+    }
+
     @Override
     public void onClickTrailer(Video video) {
         Intent trailerIntent = new Intent(Intent.ACTION_VIEW);
         trailerIntent.setData(MovieDbApiFactory.buildVideoUri(video.getKey()));
 
         startActivity(trailerIntent);
+    }
+
+    @Override
+    public void onClickReview(Review review) {
+        Intent reviewIntent = new Intent(Intent.ACTION_VIEW);
+        reviewIntent.setData(Uri.parse(review.getUrl()));
+
+        startActivity(reviewIntent);
     }
 
     private void showTrailers() {
@@ -125,5 +176,15 @@ public class MovieDetailActivity extends AppCompatActivity implements VideoAdapt
     private void hideTrailers() {
         mVideoTitle.setVisibility(View.GONE);
         mMovieTrailersRecylerView.setVisibility(View.GONE);
+    }
+
+    private void showReviews() {
+        mReviewTitle.setVisibility(View.VISIBLE);
+        mMovieReviewsRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideReviews() {
+        mReviewTitle.setVisibility(View.GONE);
+        mMovieReviewsRecyclerView.setVisibility(View.GONE);
     }
 }
