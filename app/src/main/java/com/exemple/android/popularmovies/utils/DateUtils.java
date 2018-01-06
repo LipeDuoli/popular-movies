@@ -10,4 +10,13 @@ public class DateUtils {
         DateFormat dateInstance = SimpleDateFormat.getDateInstance();
         return dateInstance.format(date);
     }
+
+    public static String formatDate(long longDate){
+        Date date = new Date(longDate);
+        return DateUtils.formatDate(date);
+    }
+
+    public static long dateToLong(Date date){
+        return date.getTime();
+    }
 }

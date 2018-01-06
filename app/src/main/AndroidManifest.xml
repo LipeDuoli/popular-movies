@@ -21,6 +21,11 @@
         <activity android:name=".activities.MovieDetailActivity"
             android:label="@string/detail_activity_title"
             android:parentActivityName=".activities.MainActivity"/>
+
+        <provider
+            android:authorities="com.exemple.android.popularmovies"
+            android:name=".data.MovieProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

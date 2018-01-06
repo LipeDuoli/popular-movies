@@ -12,6 +12,9 @@
     <string name="movie_vote_format">%1$.1f/10</string>
     <string name="movie_trailer_title">Videos</string>
     <string name="movie_review_title">Crítica</string>
+    <string name="favorite_movie">Marcar como favorito</string>
+    <string name="save_favorite_movie">Filme adicionado aos favoritos</string>
+    <string name="remove_favorite_movie">Filme removido dos favoritos</string>
 
     <!--uncomment the line below and insert you API KEY-->
     <!--<string name="moviedb_api_key" translatable="false">API_KEY</string>-->

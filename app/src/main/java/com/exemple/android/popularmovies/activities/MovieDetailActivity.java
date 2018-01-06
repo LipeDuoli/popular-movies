@@ -1,20 +1,27 @@
 package com.exemple.android.popularmovies.activities;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.exemple.android.popularmovies.R;
 import com.exemple.android.popularmovies.adapter.ReviewAdapter;
 import com.exemple.android.popularmovies.adapter.VideoAdapter;
+import com.exemple.android.popularmovies.data.MovieContract;
 import com.exemple.android.popularmovies.model.Movie;
 import com.exemple.android.popularmovies.model.PageableList;
 import com.exemple.android.popularmovies.model.PosterSize;
@@ -23,6 +30,7 @@ import com.exemple.android.popularmovies.model.Video;
 import com.exemple.android.popularmovies.service.MovieDbApiFactory;
 import com.exemple.android.popularmovies.service.MovieDbService;
 import com.exemple.android.popularmovies.utils.DateUtils;
+import com.exemple.android.popularmovies.utils.MovieUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -62,6 +70,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private Movie mMovie;
     private VideoAdapter mVideoAdapter;
     private ReviewAdapter mReviewAdapter;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +175,59 @@ public class MovieDetailActivity extends AppCompatActivity implements
         reviewIntent.setData(Uri.parse(review.getUrl()));
 
         startActivity(reviewIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.move_detail_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isMovieFavorited()){
+            MenuItem item = menu.findItem(R.id.action_favorite_movie);
+            item.setChecked(true);
+            item.setIcon(R.drawable.ic_star_black_24dp);
+        }
+        return true;
+    }
+
+    private boolean isMovieFavorited() {
+        Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, mMovie.getId());
+        Cursor query = getContentResolver().query(uri, null, null, null, null);
+
+        return query != null && query.getCount() >= 1;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_favorite_movie:
+                if (!item.isChecked()){
+                    item.setChecked(true);
+                    item.setIcon(R.drawable.ic_star_black_24dp);
+                    saveFavoriteMovie();
+                } else {
+                    item.setChecked(false);
+                    item.setIcon(R.drawable.ic_star_border_black_24dp);
+                    removeFavoriteMovie();
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void removeFavoriteMovie() {
+        Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, mMovie.getId());
+        getContentResolver().delete(uri, null, null);
+        Toast.makeText(this, getText(R.string.remove_favorite_movie), Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveFavoriteMovie() {
+        ContentValues values = MovieUtils.convertTo(mMovie);
+        getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
+        Toast.makeText(this, getText(R.string.save_favorite_movie), Toast.LENGTH_SHORT).show();
     }
 
     private void showTrailers() {
