@@ -177,16 +177,19 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_filter_popular_movies:
                 item.setChecked(true);
                 mloadedMovieType = FilterMovieType.POPULAR;
+                loadMovieData(mloadedMovieType, FIRST_PAGE);
                 break;
             case R.id.action_filter_top_rated:
                 item.setChecked(true);
                 mloadedMovieType = FilterMovieType.TOP_RATED;
+                loadMovieData(mloadedMovieType, FIRST_PAGE);
                 break;
             case R.id.action_filter_favorited:
                 item.setChecked(true);
                 mloadedMovieType = FilterMovieType.FAVORIRED;
+                loadMovieData(mloadedMovieType, FIRST_PAGE);
+                break;
         }
-        loadMovieData(mloadedMovieType, FIRST_PAGE);
         return super.onOptionsItemSelected(item);
     }
 

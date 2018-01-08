@@ -9,6 +9,7 @@
     <string name="show_favorited">Filtrar por Filmes Favoritos</string>
     <string name="detail_activity_title">Detalhes do Filme</string>
     <string name="movie_error_icon">Icone erro carregamento</string>
+    <string name="filter_menu">Filtrar Por</string>
 
     <!--detail activity-->
     <string name="movie_vote_format">%1$.1f/10</string>
