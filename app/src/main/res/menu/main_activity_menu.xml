@@ -7,6 +7,8 @@
             android:title="@string/show_popular_movies" />
         <item android:id="@+id/action_filter_top_rated"
             android:title="@string/show_top_rated" />
+        <item android:id="@+id/action_filter_favorited"
+            android:title="@string/show_favorited" />
     </group>
 
 </menu>

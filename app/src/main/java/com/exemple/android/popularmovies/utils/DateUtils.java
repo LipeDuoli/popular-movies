@@ -11,9 +11,8 @@ public class DateUtils {
         return dateInstance.format(date);
     }
 
-    public static String formatDate(long longDate){
-        Date date = new Date(longDate);
-        return DateUtils.formatDate(date);
+    public static Date formatToDate(long longDate){
+        return new Date(longDate);
     }
 
     public static long dateToLong(Date date){

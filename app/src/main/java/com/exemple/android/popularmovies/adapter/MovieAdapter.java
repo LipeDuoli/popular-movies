@@ -47,7 +47,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         String posterUrl = MovieDbApiFactory.getPosterUrl(currentMovie.getPosterPath(), PosterSize.W185);
 
-        Picasso.with(mContext).load(posterUrl).into(holder.moviePoster);
+        Picasso.with(mContext).load(posterUrl)
+                .error(R.drawable.ic_error_outline_black_24dp)
+                .into(holder.moviePoster);
     }
 
     @Override

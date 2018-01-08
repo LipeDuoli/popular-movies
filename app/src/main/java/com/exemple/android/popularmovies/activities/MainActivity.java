@@ -1,6 +1,7 @@
 package com.exemple.android.popularmovies.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +16,16 @@ import android.widget.ProgressBar;
 
 import com.exemple.android.popularmovies.R;
 import com.exemple.android.popularmovies.adapter.MovieAdapter;
+import com.exemple.android.popularmovies.data.MovieContract;
 import com.exemple.android.popularmovies.model.Movie;
 import com.exemple.android.popularmovies.model.PageableList;
+import com.exemple.android.popularmovies.service.FilterMovieType;
 import com.exemple.android.popularmovies.service.MovieDbApiFactory;
 import com.exemple.android.popularmovies.service.MovieDbService;
-import com.exemple.android.popularmovies.service.FilterMovieType;
 import com.exemple.android.popularmovies.utils.EndlessRecyclerViewScrollListener;
+import com.exemple.android.popularmovies.utils.MovieUtils;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+
         @Override
         public void onFailure(Call<PageableList<Movie>> call, Throwable t) {
             Log.e(TAG, t.getMessage());
@@ -100,7 +106,23 @@ public class MainActivity extends AppCompatActivity
             case FilterMovieType.TOP_RATED:
                 loadTopRatedMovieData(pageNumber);
                 break;
+            case FilterMovieType.FAVORIRED:
+                loadFavoritedMovieData();
+                break;
         }
+    }
+
+    private void loadFavoritedMovieData() {
+        Cursor query = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                MovieContract.MovieEntry.COLUMN_TITLE);
+
+        List<Movie> movies = MovieUtils.movieListFrom(query);
+        mProgressBarLoadingMovies.setVisibility(View.GONE);
+        displayErrorFrame(false);
+        mMovieAdapter.setMovieList(movies);
     }
 
     private void loadPopularMovieData(int pageNumber) {
@@ -125,7 +147,9 @@ public class MainActivity extends AppCompatActivity
         mEndlessScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadMovieData(mloadedMovieType, page);
+                if (mloadedMovieType != FilterMovieType.FAVORIRED) {
+                    loadMovieData(mloadedMovieType, page);
+                }
             }
         };
         mMovieRecyclerView.addOnScrollListener(mEndlessScrollListener);
@@ -158,6 +182,9 @@ public class MainActivity extends AppCompatActivity
                 item.setChecked(true);
                 mloadedMovieType = FilterMovieType.TOP_RATED;
                 break;
+            case R.id.action_filter_favorited:
+                item.setChecked(true);
+                mloadedMovieType = FilterMovieType.FAVORIRED;
         }
         loadMovieData(mloadedMovieType, FIRST_PAGE);
         return super.onOptionsItemSelected(item);
