@@ -17,10 +17,11 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:contentDescription="@string/poster_description"
             android:scaleType="centerCrop"
-            tools:src="@drawable/movie_placeholder"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/movie_placeholder" />
 
         <TextView
             android:id="@+id/tv_movie_title"

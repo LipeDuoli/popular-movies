@@ -6,7 +6,9 @@
     <string name="load_movie_erro_button">Recarregar</string>
     <string name="show_popular_movies">Filtrar por Filmes Populares</string>
     <string name="show_top_rated">Filtrar por Melhores Classificados</string>
+    <string name="show_favorited">Filtrar por Filmes Favoritos</string>
     <string name="detail_activity_title">Detalhes do Filme</string>
+    <string name="movie_error_icon">Icone erro carregamento</string>
 
     <!--detail activity-->
     <string name="movie_vote_format">%1$.1f/10</string>
@@ -15,7 +17,8 @@
     <string name="favorite_movie">Marcar como favorito</string>
     <string name="save_favorite_movie">Filme adicionado aos favoritos</string>
     <string name="remove_favorite_movie">Filme removido dos favoritos</string>
-    <string name="show_favorited">Filtrar por Filmes Favoritos</string>
+
+    <string name="poster_description">Poster do Filme</string>
 
     <!--uncomment the line below and insert you API KEY-->
     <!--<string name="moviedb_api_key" translatable="false">API_KEY</string>-->

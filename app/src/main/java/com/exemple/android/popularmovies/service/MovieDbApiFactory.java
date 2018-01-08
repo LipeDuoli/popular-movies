@@ -44,10 +44,7 @@ public class MovieDbApiFactory {
     }
 
     public static String getPosterUrl(String posterPath, @PosterSize.Size String posterSize) {
-        String buildPosterUrl = MOVIEDB_POSTER_BASE_URL + posterSize + posterPath;
-//        Log.d(TAG, "IMG url: " + buildPosterUrl);
-
-        return buildPosterUrl;
+        return MOVIEDB_POSTER_BASE_URL + posterSize + posterPath;
     }
 
     public static Uri buildVideoUri(String movieKey){

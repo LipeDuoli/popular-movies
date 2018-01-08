@@ -197,7 +197,12 @@ public class MovieDetailActivity extends AppCompatActivity implements
         Uri uri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, mMovie.getId());
         Cursor query = getContentResolver().query(uri, null, null, null, null);
 
-        return query != null && query.getCount() >= 1;
+        if (query != null && query.getCount() >= 1){
+            query.close();
+            return true;
+        }
+        query.close();
+        return false;
     }
 
     @Override
