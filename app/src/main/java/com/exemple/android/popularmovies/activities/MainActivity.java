@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity
     Button mReloadMovieButton;
     @BindView(R.id.load_movie_erro_frame)
     ConstraintLayout mLoadMovieErroFrame;
+    @BindView(R.id.no_favorited_movie_frame)
+    ConstraintLayout mNoFavoritedMovies;
     @BindView(R.id.pb_loading_movies)
     ProgressBar mProgressBarLoadingMovies;
 
@@ -55,7 +57,6 @@ public class MainActivity extends AppCompatActivity
     private Callback<PageableList<Movie>> retrofitMovieCallback = new Callback<PageableList<Movie>>() {
         @Override
         public void onResponse(Call<PageableList<Movie>> call, Response<PageableList<Movie>> response) {
-            mProgressBarLoadingMovies.setVisibility(View.GONE);
             if (response.isSuccessful()) {
                 displayErrorFrame(false);
                 if (response.body().getPage() == FIRST_PAGE) {
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity
         if (pageNumber == FIRST_PAGE) {
             mMovieRecyclerView.setVisibility(View.GONE);
             mProgressBarLoadingMovies.setVisibility(View.VISIBLE);
+            mNoFavoritedMovies.setVisibility(View.GONE);
+            mLoadMovieErroFrame.setVisibility(View.GONE);
         }
 
         switch (movieType) {
@@ -119,10 +122,13 @@ public class MainActivity extends AppCompatActivity
                 null,
                 MovieContract.MovieEntry.COLUMN_TITLE);
 
-        List<Movie> movies = MovieUtils.movieListFrom(query);
-        mProgressBarLoadingMovies.setVisibility(View.GONE);
-        displayErrorFrame(false);
-        mMovieAdapter.setMovieList(movies);
+        if (query != null && query.getCount() > 0){
+            List<Movie> movies = MovieUtils.movieListFrom(query);
+            mMovieAdapter.setMovieList(movies);
+            displayErrorFrame(false);
+        } else {
+            displayErrorFrame(true);
+        }
     }
 
     private void loadPopularMovieData(int pageNumber) {
@@ -156,11 +162,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displayErrorFrame(boolean displayFrame) {
+        mProgressBarLoadingMovies.setVisibility(View.GONE);
         if (displayFrame) {
-            mLoadMovieErroFrame.setVisibility(View.VISIBLE);
             mMovieRecyclerView.setVisibility(View.GONE);
+            if (mloadedMovieType == FilterMovieType.FAVORIRED){
+                mNoFavoritedMovies.setVisibility(View.VISIBLE);
+            } else {
+                mLoadMovieErroFrame.setVisibility(View.VISIBLE);
+            }
         } else {
             mLoadMovieErroFrame.setVisibility(View.GONE);
+            mNoFavoritedMovies.setVisibility(View.GONE);
             mMovieRecyclerView.setVisibility(View.VISIBLE);
         }
     }
