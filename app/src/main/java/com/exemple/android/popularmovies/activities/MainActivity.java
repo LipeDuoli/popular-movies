@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity
         implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private static final int FIRST_PAGE = 1;
+    private static final String STATE_MOVIE_TYPE = "movieTypeSelected";
     private static String TAG = MainActivity.class.getSimpleName();
 
     @BindView(R.id.rv_movie_posters)
@@ -82,7 +83,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mloadedMovieType = FilterMovieType.POPULAR;
+        if (savedInstanceState != null) {
+            mloadedMovieType = savedInstanceState.getInt(STATE_MOVIE_TYPE);
+        } else {
+            mloadedMovieType = FilterMovieType.POPULAR;
+        }
 
         configureRecyclerView();
     }
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity
                 null,
                 MovieContract.MovieEntry.COLUMN_TITLE);
 
-        if (query != null && query.getCount() > 0){
+        if (query != null && query.getCount() > 0) {
             List<Movie> movies = MovieUtils.movieListFrom(query);
             mMovieAdapter.setMovieList(movies);
             displayErrorFrame(false);
@@ -203,6 +208,12 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE_MOVIE_TYPE, mloadedMovieType);
+        super.onSaveInstanceState(outState);
     }
 
     @OnClick(R.id.load_movie_erro_button)
